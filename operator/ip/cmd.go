@@ -40,7 +40,7 @@ func Cmd() *cobra.Command {
 				return fmt.Errorf("%w: provider address must valid bech32", err)
 			}
 
-			client, err := clusterClient.NewClient(cmd.Context(), logger, ns)
+			client, err := clusterClient.NewClient(cmd.Context(), logger, ns, opcfg.ClientConfig)
 			if err != nil {
 				return err
 			}

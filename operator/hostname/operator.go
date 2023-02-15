@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/akash-network/provider/cluster/kube"
 	"math"
 	"strconv"
 	"strings"
@@ -34,6 +35,10 @@ import (
 	crd "github.com/akash-network/provider/pkg/apis/akash.network/v2beta2"
 	akashclientset "github.com/akash-network/provider/pkg/client/clientset/versioned"
 	"github.com/akash-network/provider/tools/fromctx"
+)
+
+const (
+	certManager = "cert-manager.io"
 )
 
 var (
@@ -677,7 +682,7 @@ func (op *hostnameOperator) connectHostnameToDeployment(ctx context.Context, dir
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        ingressName,
 			Labels:      labels,
-			Annotations: kubeNginxIngressAnnotations(directive),
+			Annotations: kubeNginxIngressAnnotations(directive, op.cfg.ClientConfig.Ssl),
 		},
 		Spec: netv1.IngressSpec{
 			IngressClassName: &ingressClassName,
@@ -722,7 +727,7 @@ func ingressRules(hostname string, kubeServiceName string, kubeServicePort int32
 	}}
 }
 
-func kubeNginxIngressAnnotations(directive chostname.ConnectToDeploymentDirective) map[string]string {
+func kubeNginxIngressAnnotations(directive chostname.ConnectToDeploymentDirective, sslConfig kube.Ssl) map[string]string {
 	// For kubernetes/ingress-nginx
 	// https://github.com/kubernetes/ingress-nginx
 	const root = "nginx.ingress.kubernetes.io"
@@ -760,6 +765,15 @@ func kubeNginxIngressAnnotations(directive chostname.ConnectToDeploymentDirectiv
 			// The actual separator is the space character for kubernetes/ingress-nginx
 			strBuilder.WriteRune(' ')
 		}
+	}
+
+	switch sslConfig.IssuerType {
+	case kube.ClusterIssuer:
+		result[fmt.Sprintf("%s/cluster-issuer", certManager)] = sslConfig.IssuerName
+		break
+	case kube.Issuer:
+		result[fmt.Sprintf("%s/issuer", certManager)] = sslConfig.IssuerName
+		break
 	}
 
 	result[fmt.Sprintf("%s/proxy-next-upstream", root)] = strBuilder.String()

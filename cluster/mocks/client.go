@@ -97,17 +97,17 @@ func (_c *Client_AllHostnames_Call) RunAndReturn(run func(context.Context) ([]ho
 	return _c
 }
 
-// ConnectHostnameToDeployment provides a mock function with given fields: ctx, directive
-func (_m *Client) ConnectHostnameToDeployment(ctx context.Context, directive hostname.ConnectToDeploymentDirective) error {
-	ret := _m.Called(ctx, directive)
+// ConnectHostnameToDeployment provides a mock function with given fields: ctx, directive, tlsEnabled
+func (_m *Client) ConnectHostnameToDeployment(ctx context.Context, directive hostname.ConnectToDeploymentDirective, tlsEnabled bool) error {
+	ret := _m.Called(ctx, directive, tlsEnabled)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ConnectHostnameToDeployment")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, hostname.ConnectToDeploymentDirective) error); ok {
-		r0 = rf(ctx, directive)
+	if rf, ok := ret.Get(0).(func(context.Context, hostname.ConnectToDeploymentDirective, bool) error); ok {
+		r0 = rf(ctx, directive, tlsEnabled)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -123,13 +123,14 @@ type Client_ConnectHostnameToDeployment_Call struct {
 // ConnectHostnameToDeployment is a helper method to define mock.On call
 //   - ctx context.Context
 //   - directive hostname.ConnectToDeploymentDirective
-func (_e *Client_Expecter) ConnectHostnameToDeployment(ctx interface{}, directive interface{}) *Client_ConnectHostnameToDeployment_Call {
-	return &Client_ConnectHostnameToDeployment_Call{Call: _e.mock.On("ConnectHostnameToDeployment", ctx, directive)}
+//   - tlsEnabled bool
+func (_e *Client_Expecter) ConnectHostnameToDeployment(ctx interface{}, directive interface{}, tlsEnabled interface{}) *Client_ConnectHostnameToDeployment_Call {
+	return &Client_ConnectHostnameToDeployment_Call{Call: _e.mock.On("ConnectHostnameToDeployment", ctx, directive, tlsEnabled)}
 }
 
-func (_c *Client_ConnectHostnameToDeployment_Call) Run(run func(ctx context.Context, directive hostname.ConnectToDeploymentDirective)) *Client_ConnectHostnameToDeployment_Call {
+func (_c *Client_ConnectHostnameToDeployment_Call) Run(run func(ctx context.Context, directive hostname.ConnectToDeploymentDirective, tlsEnabled bool)) *Client_ConnectHostnameToDeployment_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(hostname.ConnectToDeploymentDirective))
+		run(args[0].(context.Context), args[1].(hostname.ConnectToDeploymentDirective), args[2].(bool))
 	})
 	return _c
 }
@@ -139,7 +140,7 @@ func (_c *Client_ConnectHostnameToDeployment_Call) Return(_a0 error) *Client_Con
 	return _c
 }
 
-func (_c *Client_ConnectHostnameToDeployment_Call) RunAndReturn(run func(context.Context, hostname.ConnectToDeploymentDirective) error) *Client_ConnectHostnameToDeployment_Call {
+func (_c *Client_ConnectHostnameToDeployment_Call) RunAndReturn(run func(context.Context, hostname.ConnectToDeploymentDirective, bool) error) *Client_ConnectHostnameToDeployment_Call {
 	_c.Call.Return(run)
 	return _c
 }

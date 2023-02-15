@@ -443,6 +443,11 @@ func RunCmd() *cobra.Command {
 		panic(err)
 	}
 
+	cmd.Flags().Bool(providerflags.FlagSslEnabled, false, "enable issuing of SSL certificates on the provider's ingress controller. defaults to false")
+	if err := viper.BindPFlag(providerflags.FlagSslEnabled, cmd.Flags().Lookup(providerflags.FlagSslEnabled)); err != nil {
+		return nil
+	}
+
 	return cmd
 }
 
@@ -861,7 +866,16 @@ func createClusterClient(ctx context.Context, log log.Logger, _ *cobra.Command) 
 		return nil, fmt.Errorf("%w: --%s required", errInvalidConfig, providerflags.FlagK8sManifestNS)
 	}
 
-	return kube.NewClient(ctx, log, ns)
+	var sslCfg kube.Ssl
+	if viper.GetBool(providerflags.FlagSslEnabled) {
+		sslCfg = kube.Ssl{
+			IssuerName: viper.GetString(providerflags.FlagSslIssuerName),
+			IssuerType: viper.GetString(providerflags.FlagSslIssuerType),
+		}
+	}
+	ccfg := kube.ClientConfig{Ssl: sslCfg}
+
+	return kube.NewClient(ctx, log, ns, ccfg)
 }
 
 func showErrorToUser(err error) error {

@@ -57,7 +57,7 @@ func TestNewClientNSNotFound(t *testing.T) {
 	ctx = context.WithValue(ctx, fromctx.CtxKeyKubeClientSet, kubernetes.Interface(kc))
 	ctx = context.WithValue(ctx, fromctx.CtxKeyAkashClientSet, akashclientset.Interface(ac))
 
-	cl, err := NewClient(ctx, atestutil.Logger(t), ns)
+	ac, err := NewClient(ctx, atestutil.Logger(t), ns, providerflags.KubeConfigDefaultPath, ClientConfig{})
 	require.True(t, kubeErrors.IsNotFound(err))
 	require.Nil(t, cl)
 }
@@ -103,6 +103,7 @@ func TestNewClient(t *testing.T) {
 	require.NoError(t, err)
 
 	cl, err := NewClient(ctx, atestutil.Logger(t), ns)
+	ac, err := NewClient(ctx, atestutil.Logger(t), ns, providerflags.KubeConfigDefaultPath, ClientConfig{})
 
 	require.NoError(t, err)
 
