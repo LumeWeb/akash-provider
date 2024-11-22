@@ -867,7 +867,9 @@ func createClusterClient(ctx context.Context, log log.Logger, _ *cobra.Command) 
 	}
 
 	var sslCfg kube.Ssl
+	log.Info("SSL enabled", "enabled", viper.GetBool(providerflags.FlagSslEnabled))
 	if viper.GetBool(providerflags.FlagSslEnabled) {
+		log.Info("SSL configuration", "issuer-name", viper.GetString(providerflags.FlagSslIssuerName), "issuer-type", viper.GetString(providerflags.FlagSslIssuerType))
 		sslCfg = kube.Ssl{
 			IssuerName: viper.GetString(providerflags.FlagSslIssuerName),
 			IssuerType: viper.GetString(providerflags.FlagSslIssuerType),
