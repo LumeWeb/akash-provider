@@ -13,7 +13,7 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
     steps:
@@ -47,7 +47,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build application
         run: |
-          CGO_ENABLED=0 GO111MODULE=on go build -mod=readonly ./cmd/provider-services
+          GO111MODULE=on go build -mod=readonly ./cmd/provider-services
       - name: Push Docker image
         uses: docker/build-push-action@v5
         with:
