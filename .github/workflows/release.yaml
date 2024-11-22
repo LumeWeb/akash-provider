@@ -47,6 +47,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build application
         run: |
+          export CGO_ENABLED=0
           make build
           GO111MODULE=on go build -mod=readonly ./cmd/provider-services
       - name: Push Docker image
