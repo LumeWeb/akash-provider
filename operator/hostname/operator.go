@@ -677,6 +677,18 @@ func (op *hostnameOperator) connectHostnameToDeployment(ctx context.Context, dir
 	labels[builder.AkashManagedLabelName] = "true"
 	builder.AppendLeaseLabels(directive.LeaseID, labels)
 
+	tlsEnabled := op.cfg.ClientConfig.Ssl != kube.Ssl{}
+
+	var tls []netv1.IngressTLS
+	if tlsEnabled {
+		tls = []netv1.IngressTLS{
+			{
+				Hosts:      []string{directive.Hostname},
+				SecretName: fmt.Sprintf("%s-tls", ingressName),
+			},
+		}
+	}
+
 	ingressClassName := akashIngressClassName
 	obj := &netv1.Ingress{
 		ObjectMeta: metav1.ObjectMeta{
@@ -687,6 +699,7 @@ func (op *hostnameOperator) connectHostnameToDeployment(ctx context.Context, dir
 		Spec: netv1.IngressSpec{
 			IngressClassName: &ingressClassName,
 			Rules:            rules,
+			TLS:              tls,
 		},
 	}
 

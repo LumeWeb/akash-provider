@@ -70,6 +70,8 @@ func kubeNginxIngressAnnotations(directive chostname.ConnectToDeploymentDirectiv
 	switch sslConfig.IssuerType {
 	case ClusterIssuer:
 		result[fmt.Sprintf("%s/cluster-Issuer", certManager)] = sslConfig.IssuerName
+		result["cert-manager.io/issuer-kind"] = "ClusterIssuer"
+		result["cert-manager.io/issuer-group"] = "cert-manager.io"
 		break
 	case Issuer:
 		result[fmt.Sprintf("%s/Issuer", certManager)] = sslConfig.IssuerName
