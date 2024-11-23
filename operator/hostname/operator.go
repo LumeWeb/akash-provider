@@ -679,6 +679,8 @@ func (op *hostnameOperator) connectHostnameToDeployment(ctx context.Context, dir
 
 	tlsEnabled := op.cfg.ClientConfig.Ssl != kube.Ssl{}
 
+	op.log.Debug("connectHostnameToDeployment: tls enabled", "enabled", tlsEnabled)
+
 	var tls []netv1.IngressTLS
 	if tlsEnabled {
 		tls = []netv1.IngressTLS{
@@ -694,7 +696,7 @@ func (op *hostnameOperator) connectHostnameToDeployment(ctx context.Context, dir
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        ingressName,
 			Labels:      labels,
-			Annotations: kubeNginxIngressAnnotations(directive, op.cfg.ClientConfig.Ssl),
+			Annotations: kubeNginxIngressAnnotations(directive, op.cfg.ClientConfig.Ssl, op.log),
 		},
 		Spec: netv1.IngressSpec{
 			IngressClassName: &ingressClassName,
@@ -740,7 +742,7 @@ func ingressRules(hostname string, kubeServiceName string, kubeServicePort int32
 	}}
 }
 
-func kubeNginxIngressAnnotations(directive chostname.ConnectToDeploymentDirective, sslConfig kube.Ssl) map[string]string {
+func kubeNginxIngressAnnotations(directive chostname.ConnectToDeploymentDirective, sslConfig kube.Ssl, logger log.Logger) map[string]string {
 	// For kubernetes/ingress-nginx
 	// https://github.com/kubernetes/ingress-nginx
 	const root = "nginx.ingress.kubernetes.io"
@@ -779,6 +781,9 @@ func kubeNginxIngressAnnotations(directive chostname.ConnectToDeploymentDirectiv
 			strBuilder.WriteRune(' ')
 		}
 	}
+
+	logger.Debug("kubeNginxIngressAnnotations: issuer type", "type", sslConfig.IssuerType)
+	logger.Debug("kubeNginxIngressAnnotations: issuer name", "name", sslConfig.IssuerName)
 
 	switch sslConfig.IssuerType {
 	case kube.ClusterIssuer:
