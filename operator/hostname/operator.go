@@ -722,18 +722,23 @@ func ingressRules(hostname string, kubeServiceName string, kubeServicePort int32
 	// for some reason we need to pass a pointer to this
 	pathTypeForAll := netv1.PathTypePrefix
 	ruleValue := netv1.HTTPIngressRuleValue{
-		Paths: []netv1.HTTPIngressPath{{
-			Path:     "/",
-			PathType: &pathTypeForAll,
-			Backend: netv1.IngressBackend{
-				Service: &netv1.IngressServiceBackend{
-					Name: kubeServiceName,
-					Port: netv1.ServiceBackendPort{
-						Number: kubeServicePort,
+		Paths: []netv1.HTTPIngressPath{
+			{
+				Path:     "/((?!.well-known/acme-challenge/).*)", // Negative lookahead to exclude ACME path
+				PathType: &pathTypeForAll,
+			},
+			{
+				Path:     "/",
+				PathType: &pathTypeForAll,
+				Backend: netv1.IngressBackend{
+					Service: &netv1.IngressServiceBackend{
+						Name: kubeServiceName,
+						Port: netv1.ServiceBackendPort{
+							Number: kubeServicePort,
+						},
 					},
 				},
-			},
-		}},
+			}},
 	}
 
 	return []netv1.IngressRule{{
