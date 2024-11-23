@@ -795,6 +795,16 @@ func kubeNginxIngressAnnotations(directive chostname.ConnectToDeploymentDirectiv
 	}
 
 	result[fmt.Sprintf("%s/proxy-next-upstream", root)] = strBuilder.String()
+
+	logger.Debug("kubeNginxIngressAnnotations: checking SSL config",
+		"issuerType", sslConfig.IssuerType,
+		"issuerName", sslConfig.IssuerName,
+		"isZero", sslConfig == kube.Ssl{})
+
+	// Add this debug just before return
+	logger.Debug("kubeNginxIngressAnnotations: final annotations map",
+		"annotations", result)
+
 	return result
 }
 
