@@ -1,8 +1,8 @@
 package kube
 
 const (
-	Issuer        = "Issuer"
-	ClusterIssuer = "cluster-Issuer"
+	Issuer        = "issuer"
+	ClusterIssuer = "cluster-issuer"
 )
 
 type ClientConfig struct {
